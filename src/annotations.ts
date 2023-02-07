@@ -40,7 +40,7 @@ export interface Annotation {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toCommandValue(input: any): string {
+function toCommandValue(input: unknown): string {
     if (input === null || input === undefined) {
         return '';
     } else if (typeof input === 'string' || input instanceof String) {
@@ -50,7 +50,7 @@ function toCommandValue(input: any): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function escapeData(s: any): string {
+export function escapeData(s: unknown): string {
     return toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
@@ -58,7 +58,7 @@ export function escapeData(s: any): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function escapeProperty(s: any): string {
+export function escapeProperty(s: unknown): string {
     return toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')

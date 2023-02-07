@@ -1,3 +1,7 @@
+/* eslint @typescript-eslint/no-unsafe-assignment: off */
+/* eslint @typescript-eslint/no-unsafe-member-access: off */
+/* eslint @typescript-eslint/no-unsafe-call: off */
+
 import * as github from '@actions/github';
 
 // `@actions/github` does not re-export `GitHub` type, thanks for nothing.
@@ -93,8 +97,7 @@ export class CheckReporter {
             output: {
                 title: this.checkName,
                 summary: 'Unhandled error',
-                text:
-                    'Check was cancelled due to unhandled error. Check the Action logs for details.',
+                text: 'Check was cancelled due to unhandled error. Check the Action logs for details.',
             },
         });
 

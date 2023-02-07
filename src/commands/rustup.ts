@@ -212,16 +212,22 @@ expected at least ${PROFILES_MIN_VERSION}`);
         return await this.call(['self', 'update']);
     }
 
-    public async call(args: string[], options?: {}): Promise<number> {
+    public async call(
+        args: string[],
+        options?: exec.ExecOptions,
+    ): Promise<number> {
         return await exec.exec(this.path, args, options);
     }
 
     /**
      * Call the `rustup` and return an stdout
      */
-    async callStdout(args: string[], options?: {}): Promise<string> {
+    async callStdout(
+        args: string[],
+        options?: exec.ExecOptions,
+    ): Promise<string> {
         let stdout = '';
-        const resOptions = Object.assign({}, options, {
+        const resOptions: exec.ExecOptions = Object.assign({}, options, {
             listeners: {
                 stdout: (buffer: Buffer): void => {
                     stdout += buffer.toString();
