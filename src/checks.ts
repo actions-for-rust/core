@@ -5,6 +5,7 @@
 import * as github from '@actions/github';
 
 // `@actions/github` does not re-export `GitHub` type, thanks for nothing.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GitHub = any;
 
 interface Output {
@@ -45,6 +46,7 @@ export class CheckReporter {
         // TODO: Check for errors
 
         this.checkId = response.data.id;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.checkId!;
     }
 
