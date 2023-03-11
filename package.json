@@ -14,8 +14,11 @@
     "scripts": {
         "build": "tsc -p .",
         "format": "prettier --write 'src/**/*.ts' '__tests__/**/*.ts'",
-        "lint": "tsc --noEmit && eslint 'src/**/*.ts' '__tests__/**/*.ts'",
-        "refresh": "rm -rf ./dist/* && npm run build",
+        "lint": "run-p lint:*",
+        "lint:tsc": "tsc --noEmit",
+        "lint:eslint": "eslint 'src/**/*.ts' '__tests__/**/*.ts'",
+        "refresh": "run-s clean build",
+        "clean": "shx rm -rf ./dist/*",
         "test": "jest -c jest.config.json",
         "watch": "tsc -p . -w"
     },
@@ -48,7 +51,9 @@
         "eslint-plugin-prettier": "^4.2.1",
         "jest": "^26.6.3",
         "jest-circus": "^26.6.3",
+        "npm-run-all": "^4.1.5",
         "prettier": "^2.8.4",
+        "shx": "^0.3.4",
         "ts-jest": "^26.4.4",
         "typescript": "^4.9.5"
     },
