@@ -1,9 +1,10 @@
-import * as io from '@actions/io';
+import * as cache from '@actions/cache';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import * as cache from '@actions/cache';
 import * as http from '@actions/http-client';
+import * as io from '@actions/io';
 import * as path from 'path';
+import { getErrorMessage } from '../utils/errors';
 
 export async function resolveVersion(crate: string): Promise<string> {
     const url = `https://crates.io/api/v1/crates/${crate}`;
@@ -39,7 +40,7 @@ export class Cargo {
 see https://help.github.com/en/articles/software-in-virtual-environments-for-github-actions',
             );
             core.error(
-                'To install it, use this action: https://github.com/actions-rs/toolchain',
+                'To install it, use this action: https://github.com/actions-for-rust/toolchain',
             );
 
             throw error;
@@ -73,15 +74,16 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
         primaryKey?: string,
         restoreKeys?: string[],
     ): Promise<string> {
-        if (version == 'latest') {
-            version = await resolveVersion(program);
+        let sVersion = version ?? 'latest';
+        if (sVersion === 'latest') {
+            sVersion = await resolveVersion(program);
         }
         if (primaryKey) {
             restoreKeys = restoreKeys || [];
             const paths = [path.join(path.dirname(this.path), program)];
-            const programKey = `${program}-${version}-${primaryKey}`;
+            const programKey = `${program}-${sVersion}-${primaryKey}`;
             const programRestoreKeys = restoreKeys.map(
-                (key) => `${program}-${version}-${key}`,
+                (key) => `${program}-${sVersion}-${key}`,
             );
             const cacheKey = await cache.restoreCache(
                 paths,
@@ -90,7 +92,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
             );
             if (cacheKey) {
                 core.info(
-                    `Using cached \`${program}\` with version ${version}`,
+                    `Using cached \`${program}\` with version ${sVersion}`,
                 );
                 return program;
             } else {
@@ -103,10 +105,8 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
                         throw error;
                     } else if (error instanceof cache.ReserveCacheError) {
                         core.info(error.message);
-                    } else if (error instanceof Error) {
-                        core.warning(error);
                     } else {
-                        core.warning(`${error}`);
+                        core.warning(getErrorMessage(error));
                     }
                 }
                 return res;

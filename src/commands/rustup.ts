@@ -1,12 +1,12 @@
+import * as core from '@actions/core';
+import * as exec from '@actions/exec';
+import * as io from '@actions/io';
+import * as tc from '@actions/tool-cache';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as process from 'process';
-
 import * as semver from 'semver';
-import * as io from '@actions/io';
-import * as core from '@actions/core';
-import * as exec from '@actions/exec';
-import * as tc from '@actions/tool-cache';
+import { getErrorMessage } from '../utils/errors';
 
 const PROFILES_MIN_VERSION = '1.20.1';
 const COMPONENTS_MIN_VERSION = '1.20.1';
@@ -33,8 +33,9 @@ export class RustUp {
         try {
             return await RustUp.get();
         } catch (error) {
+            const message = getErrorMessage(error);
             core.debug(
-                `Unable to find "rustup" executable, installing it now. Reason: ${error}`,
+                `Unable to find "rustup" executable, installing it now. Reason: ${message}`,
             );
             return await RustUp.install();
         }
@@ -87,7 +88,10 @@ export class RustUp {
         }
 
         // `$HOME` should always be declared, so it is more to get the linters happy
-        core.addPath(path.join(process.env.HOME!, '.cargo', 'bin')); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        if (process.env.HOME == null) {
+            throw Error('$HOME is undefined. No home directory?');
+        }
+        core.addPath(path.join(process.env.HOME, '.cargo', 'bin'));
 
         // Assuming it is in the $PATH already
         return new RustUp('rustup');

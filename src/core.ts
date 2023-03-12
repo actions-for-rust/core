@@ -2,9 +2,9 @@ export * from './commands/cargo';
 export * from './commands/cross';
 export * from './commands/rustup';
 
-import * as input from './input';
-import * as checks from './checks';
 import * as annotations from './annotations';
+import * as checks from './checks';
+import * as input from './input';
 
 // Re-exports
-export { input, checks, annotations };
+export { annotations, checks, input };

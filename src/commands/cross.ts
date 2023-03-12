@@ -1,8 +1,8 @@
-import * as os from 'os';
-import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-
+import * as io from '@actions/io';
+import * as os from 'os';
+import { getErrorMessage } from '../utils/errors';
 import { Cargo } from './cargo';
 
 export class Cross {
@@ -16,7 +16,7 @@ export class Cross {
         try {
             return await Cross.get();
         } catch (error) {
-            core.debug(`${error}`);
+            core.debug(getErrorMessage(error));
             return await Cross.install();
         }
     }

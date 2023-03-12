@@ -1,12 +1,7 @@
-/* eslint @typescript-eslint/no-unsafe-assignment: off */
-/* eslint @typescript-eslint/no-unsafe-member-access: off */
-/* eslint @typescript-eslint/no-unsafe-call: off */
-
 import * as github from '@actions/github';
+import type { GitHub } from '@actions/github/lib/utils';
 
-// `@actions/github` does not re-export `GitHub` type, thanks for nothing.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type GitHub = any;
+type GitHubClient = InstanceType<typeof GitHub>;
 
 interface Output {
     title: string;
@@ -18,11 +13,11 @@ interface Output {
  * Thin wrapper around the GitHub Checks API
  */
 export class CheckReporter {
-    private readonly client: GitHub;
+    private readonly client: GitHubClient;
     private readonly checkName: string;
     private checkId: undefined | number;
 
-    constructor(client: GitHub, checkName: string) {
+    constructor(client: GitHubClient, checkName: string) {
         this.client = client;
         this.checkName = checkName;
         this.checkId = undefined;
@@ -36,7 +31,7 @@ export class CheckReporter {
     ): Promise<number> {
         const { owner, repo } = github.context.repo;
 
-        const response = await this.client.checks.create({
+        const response = await this.client.rest.checks.create({
             owner: owner,
             repo: repo,
             name: this.checkName,
@@ -46,8 +41,7 @@ export class CheckReporter {
         // TODO: Check for errors
 
         this.checkId = response.data.id;
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return this.checkId!;
+        return this.checkId;
     }
 
     // TODO:
@@ -70,7 +64,7 @@ export class CheckReporter {
         const { owner, repo } = github.context.repo;
 
         // TODO: Check for errors
-        await this.client.checks.update({
+        await this.client.rest.checks.update({
             owner: owner,
             repo: repo,
             name: this.checkName,
@@ -88,7 +82,7 @@ export class CheckReporter {
         const { owner, repo } = github.context.repo;
 
         // TODO: Check for errors
-        await this.client.checks.update({
+        await this.client.rest.checks.update({
             owner: owner,
             repo: repo,
             name: this.checkName,

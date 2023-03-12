@@ -23,8 +23,9 @@ import * as os from 'os';
 
 export type AnnotationLevel = 'notice' | 'warning' | 'failure';
 interface CommandProperties {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
+    file: string;
+    line: number;
+    col?: number;
 }
 
 export interface Annotation {
@@ -39,7 +40,6 @@ export interface Annotation {
     raw_details?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toCommandValue(input: unknown): string {
     if (input === null || input === undefined) {
         return '';
@@ -49,7 +49,6 @@ function toCommandValue(input: unknown): string {
     return JSON.stringify(input);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function escapeData(s: unknown): string {
     return toCommandValue(s)
         .replace(/%/g, '%25')
@@ -57,7 +56,6 @@ export function escapeData(s: unknown): string {
         .replace(/\n/g, '%0A');
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function escapeProperty(s: unknown): string {
     return toCommandValue(s)
         .replace(/%/g, '%25')
